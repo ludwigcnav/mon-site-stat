@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Observatoire des retraites — Prototype</title>
+<style>
+  :root{
+    --navy:#1B3A5C;
+    --cream:#F7F5F0;
+    --terracotta:#C84B31;
+    --ink:#2D2A26;
+    --steel:#8FA8B8;
+    --serif: "Source Serif Pro", Georgia, "Times New Roman", serif;
+    --sans: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    --mono: "JetBrains Mono", "SF Mono", Consolas, monospace;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+
+  body{
+    font-family: var(--sans);
+    color: var(--ink);
+    background: var(--cream);
+    line-height: 1.6;
+  }
+
+  a{ color: var(--navy); text-decoration: underline; text-decoration-color: var(--steel); }
+  a:hover{ text-decoration-color: var(--terracotta); }
+  a:focus-visible, button:focus-visible{
+    outline: 3px solid var(--terracotta);
+    outline-offset: 2px;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    background: var(--navy);
+    color: var(--cream);
+    padding: 1rem 1.5rem;
+    position: sticky;
+    top:0;
+    z-index: 10;
+    border-bottom: 4px solid var(--terracotta);
+  }
+  .header-inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    display:flex;
+    justify-content: space-between;
+    align-items:center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .logo{
+    font-family: var(--serif);
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+  }
+  .logo span{ color: var(--steel); font-weight: 400; }
+
+  nav ul{
+    list-style:none;
+    display:flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+  nav a{
+    color: var(--cream);
+    text-decoration:none;
+    font-size: 0.95rem;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+  }
+  nav a:hover, nav a:focus-visible{
+    border-bottom-color: var(--terracotta);
+  }
+
+  /* ---------- Hero / signature element ---------- */
+  .hero{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 3.5rem 1.5rem 3rem;
+    display:grid;
+    grid-template-columns: 1.3fr 1fr;
+    gap: 3rem;
+    align-items:center;
+  }
+  @media (max-width: 800px){
+    .hero{ grid-template-columns: 1fr; padding-top: 2rem; }
+  }
+
+  .hero h1{
+    font-family: var(--serif);
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    line-height: 1.15;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+  .hero p{
+    font-size: 1.05rem;
+    max-width: 38ch;
+    color: #4a4640;
+  }
+
+  .counter-card{
+    background: white;
+    border: 1px solid #e3ddd1;
+    border-radius: 4px;
+    padding: 2rem;
+    text-align:center;
+    box-shadow: 0 2px 0 var(--terracotta);
+  }
+  .counter-label{
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--navy);
+    margin-bottom: 0.5rem;
+  }
+  .counter-value{
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    font-weight: 700;
+    color: var(--terracotta);
+    letter-spacing: 0.02em;
+  }
+  .counter-sub{
+    font-size: 0.8rem;
+    color: #8a8378;
+    margin-top: 0.5rem;
+  }
+
+  /* ---------- Sections ---------- */
+  section{
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem;
+  }
+  .section-title{
+    font-family: var(--serif);
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.4rem;
+    border-bottom: 2px solid var(--navy);
+    padding-bottom: 0.6rem;
+  }
+  .section-intro{
+    color:#5a554c;
+    max-width: 60ch;
+    margin: 0.8rem 0 1.5rem;
+  }
+
+  /* Theme cards */
+  .theme-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+  .theme-card{
+    background: white;
+    border: 1px solid #e3ddd1;
+    border-radius: 4px;
+    padding: 1.25rem;
+    transition: border-color 0.15s ease, transform 0.15s ease;
+  }
+  .theme-card:hover{
+    border-color: var(--terracotta);
+    transform: translateY(-2px);
+  }
+  .theme-card h3{
+    font-family: var(--serif);
+    font-size: 1.05rem;
+    margin-bottom: 0.4rem;
+    color: var(--navy);
+  }
+  .theme-card p{
+    font-size: 0.9rem;
+    color: #6b655b;
+  }
+
+  /* Chart section */
+  .chart-card{
+    background:white;
+    border: 1px solid #e3ddd1;
+    border-radius: 4px;
+    padding: 1.5rem;
+  }
+  .chart-header{
+    display:flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .chart-header h3{
+    font-family: var(--serif);
+    font-size: 1.2rem;
+  }
+  .chart-controls{
+    display:flex;
+    gap: 0.5rem;
+  }
+  .chart-controls button{
+    font-family: var(--sans);
+    font-size: 0.85rem;
+    border: 1px solid var(--navy);
+    background: white;
+    color: var(--navy);
+    padding: 0.35rem 0.8rem;
+    border-radius: 3px;
+    cursor:pointer;
+  }
+  .chart-controls button[aria-pressed="true"]{
+    background: var(--navy);
+    color: white;
+  }
+  svg text{ font-family: var(--mono); }
+
+  /* Table */
+  table{
+    width:100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
+  caption{
+    text-align:left;
+    font-size: 0.85rem;
+    color:#6b655b;
+    margin-bottom: 0.5rem;
+  }
+  th, td{
+    text-align:left;
+    padding: 0.6rem 0.8rem;
+    border-bottom: 1px solid #e3ddd1;
+  }
+  th{
+    font-family: var(--serif);
+    color: var(--navy);
+    font-weight: 700;
+  }
+  tbody tr:hover{ background: #fbf9f5; }
+  td.num{ font-family: var(--mono); text-align:right; }
+  th.num{ text-align:right; }
+
+  /* Footer */
+  footer{
+    background: var(--navy);
+    color: var(--steel);
+    margin-top: 3rem;
+    padding: 2rem 1.5rem;
+  }
+  .footer-inner{
+    max-width: 1100px;
+    margin: 0 auto;
+    display:flex;
+    justify-content: space-between;
+    flex-wrap:wrap;
+    gap: 1rem;
+    font-size: 0.85rem;
+  }
+  footer a{ color: var(--cream); }
+
+  /* Skip link */
+  .skip-link{
+    position:absolute;
+    left:-9999px;
+    background: var(--terracotta);
+    color: white;
+    padding: 0.5rem 1rem;
+  }
+  .skip-link:focus{
+    left: 1rem;
+    top: 1rem;
+    z-index: 100;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ animation: none !important; transition: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">Observatoire <span>des retraites</span></div>
+    <nav aria-label="Navigation principale">
+      <ul>
+        <li><a href="#themes">Thèmes</a></li>
+        <li><a href="#donnees">Données</a></li>
+        <li><a href="#publications">Publications</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main id="main">
+
+  <section class="hero">
+    <div>
+      <h1>Comprendre les retraites en France, chiffre par chiffre.</h1>
+      <p>
+        Statistiques publiques, séries longues et études sur les pensions, les départs en retraite
+        et les conditions de vie des retraités du régime général. Données ouvertes, mises à jour chaque trimestre.
+      </p>
+    </div>
+    <div class="counter-card" role="status" aria-live="polite">
+      <div class="counter-label">Retraités du régime général</div>
+      <div class="counter-value" id="counter">0</div>
+      <div class="counter-sub">au 31 décembre 2025 — donnée fictive de démonstration</div>
+    </div>
+  </section>
+
+  <section id="themes" aria-labelledby="themes-title">
+    <h2 class="section-title" id="themes-title">Thèmes</h2>
+    <p class="section-intro">
+      Explorez les statistiques par grand thème : assurés, droits, conditions de vie et travailleurs indépendants.
+    </p>
+    <div class="theme-grid">
+      <div class="theme-card">
+        <h3>Cotisants et carrière</h3>
+        <p>Effectifs de cotisants, durées de carrière, parcours professionnels.</p>
+      </div>
+      <div class="theme-card">
+        <h3>Démographie</h3>
+        <p>Pyramide des âges, espérance de vie, projections de population.</p>
+      </div>
+      <div class="theme-card">
+        <h3>Âge de départ</h3>
+        <p>Âges moyens de départ, surcote, décote, dispositifs spécifiques.</p>
+      </div>
+      <div class="theme-card">
+        <h3>Pensions</h3>
+        <p>Montants moyens, pensions de réversion, droits directs.</p>
+      </div>
+      <div class="theme-card">
+        <h3>Minima sociaux</h3>
+        <p>Bénéficiaires de l'Aspa et autres dispositifs de solidarité.</p>
+      </div>
+      <div class="theme-card">
+        <h3>Niveau de vie</h3>
+        <p>Inégalités de revenus, taux de pauvreté chez les retraités.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="donnees" aria-labelledby="donnees-title">
+    <h2 class="section-title" id="donnees-title">Données</h2>
+    <p class="section-intro">
+      Exemple de visualisation interactive : évolution du nombre de départs en retraite avec surcote (données fictives).
+    </p>
+
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Départs avec surcote, 2019–2024</h3>
+        <div class="chart-controls" role="group" aria-label="Filtrer par sexe">
+          <button id="btn-all" aria-pressed="true">Ensemble</button>
+          <button id="btn-women" aria-pressed="false">Femmes</button>
+          <button id="btn-men" aria-pressed="false">Hommes</button>
+        </div>
+      </div>
+
+      <svg id="chart" width="100%" height="320" viewBox="0 0 800 320" role="img" aria-labelledby="chart-desc">
+        <desc id="chart-desc">Graphique en barres montrant l'évolution du nombre de départs en retraite avec surcote entre 2019 et 2024.</desc>
+      </svg>
+
+      <table>
+        <caption>Données du graphique ci-dessus (en milliers)</caption>
+        <thead>
+          <tr>
+            <th scope="col">Année</th>
+            <th scope="col" class="num">Ensemble</th>
+            <th scope="col" class="num">Femmes</th>
+            <th scope="col" class="num">Hommes</th>
+          </tr>
+        </thead>
+        <tbody id="data-table">
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="publications" aria-labelledby="pub-title">
+    <h2 class="section-title" id="pub-title">Dernières publications</h2>
+    <div class="theme-grid">
+      <div class="theme-card">
+        <h3>Étude — Les retraités centenaires en 2025</h3>
+        <p>mai 2026 · Assurés et retraités du régime général</p>
+      </div>
+      <div class="theme-card">
+        <h3>Recueil statistique — Édition 2025</h3>
+        <p>janvier 2026 · Vue d'ensemble du régime général</p>
+      </div>
+      <div class="theme-card">
+        <h3>Cadr'@ge — Les départs avec décote</h3>
+        <p>février 2026 · Trois pistes explorées</p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer id="contact">
+  <div class="footer-inner">
+    <div>
+      <strong>Observatoire des retraites</strong> — prototype de démonstration.<br>
+      Aucune donnée réelle n'est utilisée sur cette page.
+    </div>
+    <div>
+      <a href="#">Accessibilité</a> ·
+      <a href="#">Mentions légales</a> ·
+      <a href="#">Gestion des cookies</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Compteur animé (signature element)
+  const counterEl = document.getElementById('counter');
+  const target = 14250000; // donnée fictive
+  let current = 0;
+  const duration = 1500;
+  const start = performance.now();
+
+  function formatNumber(n){
+    return Math.round(n).toLocaleString('fr-FR');
+  }
+
+  function animateCounter(now){
+    const elapsed = now - start;
+    const progress = Math.min(elapsed / duration, 1);
+    // easeOutCubic
+    const eased = 1 - Math.pow(1 - progress, 3);
+    current = target * eased;
+    counterEl.textContent = formatNumber(current);
+    if(progress < 1){
+      requestAnimationFrame(animateCounter);
+    }
+  }
+
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    counterEl.textContent = formatNumber(target);
+  } else {
+    requestAnimationFrame(animateCounter);
+  }
+
+  // Données fictives
+  const data = {
+    years: [2019, 2020, 2021, 2022, 2023, 2024],
+    all:   [85.4, 90.1, 99.8, 120.2, 128.7, 135.0],
+    women: [44.0, 47.2, 52.5, 65.6, 70.1, 74.2],
+    men:   [41.4, 42.9, 47.3, 54.6, 58.6, 60.8]
+  };
+
+  let activeSeries = 'all';
+  const colors = { all: '#1B3A5C', women: '#C84B31', men: '#8FA8B8' };
+  const labels = { all: 'Ensemble', women: 'Femmes', men: 'Hommes' };
+
+  const svg = document.getElementById('chart');
+  const chartW = 800, chartH = 320;
+  const padding = { top: 20, right: 20, bottom: 40, left: 50 };
+  const innerW = chartW - padding.left - padding.right;
+  const innerH = chartH - padding.top - padding.bottom;
+
+  function drawChart(){
+    svg.innerHTML = `<desc id="chart-desc">Graphique en barres montrant l'évolution du nombre de départs en retraite avec surcote entre 2019 et 2024 pour la série « ${labels[activeSeries]} ».</desc>`;
+
+    const values = data[activeSeries];
+    const maxVal = Math.max(...data.all) * 1.1;
+    const barWidth = innerW / values.length * 0.6;
+    const gap = innerW / values.length;
+
+    // Axes
+    let svgContent = '';
+
+    // Y axis gridlines + labels
+    const steps = 4;
+    for(let i = 0; i <= steps; i++){
+      const val = (maxVal / steps) * i;
+      const y = padding.top + innerH - (val / maxVal) * innerH;
+      svgContent += `<line x1="${padding.left}" y1="${y}" x2="${chartW - padding.right}" y2="${y}" stroke="#e3ddd1" stroke-width="1"/>`;
+      svgContent += `<text x="${padding.left - 10}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6b655b">${Math.round(val)}</text>`;
+    }
+
+    // Bars
+    values.forEach((val, i) => {
+      const barH = (val / maxVal) * innerH;
+      const x = padding.left + i * gap + (gap - barWidth) / 2;
+      const y = padding.top + innerH - barH;
+      svgContent += `<rect x="${x}" y="${y}" width="${barWidth}" height="${barH}" fill="${colors[activeSeries]}" rx="2">
+        <title>${data.years[i]} : ${val} milliers</title>
+      </rect>`;
+      svgContent += `<text x="${x + barWidth/2}" y="${y - 6}" text-anchor="middle" font-size="12" fill="#2D2A26" font-weight="bold">${val}</text>`;
+      svgContent += `<text x="${x + barWidth/2}" y="${chartH - padding.bottom + 18}" text-anchor="middle" font-size="12" fill="#6b655b">${data.years[i]}</text>`;
+    });
+
+    svg.innerHTML += svgContent;
+
+    // Table
+    const tbody = document.getElementById('data-table');
+    tbody.innerHTML = data.years.map((y, i) =>
+      `<tr><th scope="row">${y}</th><td class="num">${data.all[i]}</td><td class="num">${data.women[i]}</td><td class="num">${data.men[i]}</td></tr>`
+    ).join('');
+  }
+
+  document.getElementById('btn-all').addEventListener('click', () => setActive('all'));
+  document.getElementById('btn-women').addEventListener('click', () => setActive('women'));
+  document.getElementById('btn-men').addEventListener('click', () => setActive('men'));
+
+  function setActive(series){
+    activeSeries = series;
+    ['all','women','men'].forEach(s => {
+      document.getElementById('btn-' + s).setAttribute('aria-pressed', s === series ? 'true' : 'false');
+    });
+    drawChart();
+  }
+
+  drawChart();
+</script>
+
+</body>
+</html>
